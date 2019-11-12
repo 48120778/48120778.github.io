@@ -1,0 +1,8 @@
+name: "Hao Wang's Website for Data Science"
+navbar:
+  title: "Hao Wang's Website for Data Science"
+  left:
+    - text: "About Me"
+      href: index.html
+    - text: "Beer Study"
+      href: EDAforProject1_R5.html
