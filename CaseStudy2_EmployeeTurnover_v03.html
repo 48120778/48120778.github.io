@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Hao Wang" />
+
+
+<title>Case Study 2: Employee Turnover Rate Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="site_libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.9.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-1.46.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-1.46.1/plotly-latest.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Hao Wang's Website for Data Science</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">About Me</a>
+</li>
+<li>
+  <a href="EDAforProject1_R5.html">Beer Study</a>
+</li>
+<li>
+  <a href="CaseStudy2_EmployeeTurnover_v03.html">Attrition Study</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Case Study 2: Employee Turnover Rate Analysis</h1>
+<h4 class="author">Hao Wang</h4>
+<h4 class="date">12/3/2019</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>DDSAnalytics is an analytics company that specializes in talent management solutions for Fortune 100 companies. Talent management is defined as the iterative process of developing and retaining employees. It may include workforce planning, employee training programs, identifying high-potential employees and reducing/preventing voluntary employee turnover (attrition). To gain a competitive edge over its competition, DDSAnalytics is planning to leverage data science for talent management. The executive leadership has identified predicting employee turnover as its first application of data science for talent management. Before the business green lights the project, they have tasked the data science team to conduct an analysis of existing employee data.<br />
+<strong>YouTube</strong>: <a href="https://youtu.be/akFRgl3ZXJs" class="uri">https://youtu.be/akFRgl3ZXJs</a><br />
+<strong>Shiny</strong>: <a href="https://data-science-hw.shinyapps.io/EmployeeShiny/" class="uri">https://data-science-hw.shinyapps.io/EmployeeShiny/</a></p>
+<div id="data-set-overview" class="section level2">
+<h2>Data set overview</h2>
+<p>There are 870 obs. of 36 variables. Among the 36 variables, 9 are categorical factors, 27 are numeric variables.<br />
+No missing values in data set.</p>
+<pre><code>## &#39;data.frame&#39;:    870 obs. of  36 variables:
+##  $ ID                      : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Age                     : int  32 40 35 32 24 27 41 37 34 34 ...
+##  $ Attrition               : Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ BusinessTravel          : Factor w/ 3 levels &quot;Non-Travel&quot;,&quot;Travel_Frequently&quot;,..: 3 3 2 3 2 2 3 3 3 2 ...
+##  $ DailyRate               : int  117 1308 200 801 567 294 1283 309 1333 653 ...
+##  $ Department              : Factor w/ 3 levels &quot;Human Resources&quot;,..: 3 2 2 3 2 2 2 3 3 2 ...
+##  $ DistanceFromHome        : int  13 14 18 1 2 10 5 10 10 10 ...
+##  $ Education               : int  4 3 2 4 1 2 5 4 4 4 ...
+##  $ EducationField          : Factor w/ 6 levels &quot;Human Resources&quot;,..: 2 4 2 3 6 2 4 2 2 6 ...
+##  $ EmployeeCount           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ EmployeeNumber          : int  859 1128 1412 2016 1646 733 1448 1105 1055 1597 ...
+##  $ EnvironmentSatisfaction : int  2 3 3 3 1 4 2 4 3 4 ...
+##  $ Gender                  : Factor w/ 2 levels &quot;Female&quot;,&quot;Male&quot;: 2 2 2 1 1 2 2 1 1 2 ...
+##  $ HourlyRate              : int  73 44 60 48 32 32 90 88 87 92 ...
+##  $ JobInvolvement          : int  3 2 3 3 3 3 4 2 3 2 ...
+##  $ JobLevel                : int  2 5 3 3 1 3 1 2 1 2 ...
+##  $ JobRole                 : Factor w/ 9 levels &quot;Healthcare Representative&quot;,..: 8 6 5 8 7 5 7 8 9 1 ...
+##  $ JobSatisfaction         : int  4 3 4 4 4 1 3 4 3 3 ...
+##  $ MaritalStatus           : Factor w/ 3 levels &quot;Divorced&quot;,&quot;Married&quot;,..: 1 3 3 2 3 1 2 1 2 2 ...
+##  $ MonthlyIncome           : int  4403 19626 9362 10422 3760 8793 2127 6694 2220 5063 ...
+##  $ MonthlyRate             : int  9250 17544 19944 24032 17218 4809 5561 24223 18410 15332 ...
+##  $ NumCompaniesWorked      : int  2 1 2 1 1 1 2 2 1 1 ...
+##  $ Over18                  : Factor w/ 1 level &quot;Y&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ OverTime                : Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 1 1 2 1 2 2 2 1 ...
+##  $ PercentSalaryHike       : int  11 14 11 19 13 21 12 14 19 14 ...
+##  $ PerformanceRating       : int  3 3 3 3 3 4 3 3 3 3 ...
+##  $ RelationshipSatisfaction: int  3 1 3 3 3 3 1 3 4 2 ...
+##  $ StandardHours           : int  80 80 80 80 80 80 80 80 80 80 ...
+##  $ StockOptionLevel        : int  1 0 0 2 0 2 0 3 1 1 ...
+##  $ TotalWorkingYears       : int  8 21 10 14 6 9 7 8 1 8 ...
+##  $ TrainingTimesLastYear   : int  3 2 2 3 2 4 5 5 2 3 ...
+##  $ WorkLifeBalance         : int  2 4 3 3 3 2 2 3 3 2 ...
+##  $ YearsAtCompany          : int  5 20 2 14 6 9 4 1 1 8 ...
+##  $ YearsInCurrentRole      : int  2 7 2 10 3 7 2 0 1 2 ...
+##  $ YearsSinceLastPromotion : int  0 4 2 5 1 1 0 0 0 7 ...
+##  $ YearsWithCurrManager    : int  3 9 2 7 3 7 3 0 0 7 ...</code></pre>
+</div>
+<div id="correlation-check" class="section level2">
+<h2>Correlation Check</h2>
+<p>Variables that heavily correlated with one another won’t be eliminated following the project advice, to keep the information which may be correlated with the response individually.<br />
+<img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="data-visualization" class="section level2">
+<h2>Data visualization</h2>
+<div id="density-plots-to-check-numerical-variables-effect-on-attrition-rate." class="section level3">
+<h3>Density plots to check numerical variables effect on attrition rate.</h3>
+<p>Density plots indicate the attrition rate overlapping between ‘Yes’ or ‘No’<br />
+<img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-4.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-5.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-6.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-7.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-8.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-9.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-10.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-11.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-12.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-13.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-6-14.png" width="672" /></p>
+</div>
+<div id="bar-charts-to-check-numerical-variables-effect-on-attrition-rate." class="section level3">
+<h3>Bar charts to check numerical variables effect on attrition rate.</h3>
+<p>Bar charts indicate the attrition rate ‘Yes’ has a relatively random distribution against these variables<br />
+<img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-5.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-6.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-7.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-8.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-9.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-10.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-11.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-12.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-13.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-7-14.png" width="672" /></p>
+</div>
+</div>
+<div id="knn-model1-with-over-sampling-data-two-predictors-age-positive" class="section level2">
+<h2>KNN model1 with over-sampling data, two predictors: Age, Positive</h2>
+<pre><code>## [1] &quot;KNN Model Max Mean of Sensitivity: &quot;</code></pre>
+<pre><code>## [1] 0.8435887</code></pre>
+<pre><code>## [1] &quot;KNN Model Max Mean of Specificity: &quot;</code></pre>
+<pre><code>## [1] 0.7839081</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##                
+## classifications  No Yes
+##             No   77  10
+##             Yes 111  20
+##                                           
+##                Accuracy : 0.445           
+##                  95% CI : (0.3778, 0.5136)
+##     No Information Rate : 0.8624          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : 0.0316          
+##                                           
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##                                           
+##             Sensitivity : 0.4096          
+##             Specificity : 0.6667          
+##          Pos Pred Value : 0.8851          
+##          Neg Pred Value : 0.1527          
+##              Prevalence : 0.8624          
+##          Detection Rate : 0.3532          
+##    Detection Prevalence : 0.3991          
+##       Balanced Accuracy : 0.5381          
+##                                           
+##        &#39;Positive&#39; Class : No              
+## </code></pre>
+<p><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-12-1.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-12-2.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-12-3.png" width="672" /></p>
+</div>
+<div id="knn-model2-with-over-sampling-data-two-predictors-positive-totalworkingyears" class="section level2">
+<h2>KNN model2 with over-sampling data, two predictors: Positive, TotalWorkingYears</h2>
+<pre><code>## [1] &quot;KNN Model Max Mean of Sensitivity: &quot;</code></pre>
+<pre><code>## [1] 0.8435887</code></pre>
+<pre><code>## [1] &quot;KNN Model Max Mean of Specificity: &quot;</code></pre>
+<pre><code>## [1] 0.7839081</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##                
+## classifications  No Yes
+##             No   77  10
+##             Yes 111  20
+##                                           
+##                Accuracy : 0.445           
+##                  95% CI : (0.3778, 0.5136)
+##     No Information Rate : 0.8624          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : 0.0316          
+##                                           
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##                                           
+##             Sensitivity : 0.4096          
+##             Specificity : 0.6667          
+##          Pos Pred Value : 0.8851          
+##          Neg Pred Value : 0.1527          
+##              Prevalence : 0.8624          
+##          Detection Rate : 0.3532          
+##    Detection Prevalence : 0.3991          
+##       Balanced Accuracy : 0.5381          
+##                                           
+##        &#39;Positive&#39; Class : No              
+## </code></pre>
+<p><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-13-2.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-13-3.png" width="672" /></p>
+</div>
+<div id="knn-model-summary" class="section level2">
+<h2>KNN Model Summary</h2>
+<ol style="list-style-type: decimal">
+<li>Only numeric variables can be used as predictors in KNN model.<br />
+</li>
+<li>KNN model can provide high sensitivity or high specificity separately, with different K<br />
+</li>
+<li>Changing seed number or split percentage would throw impact on sensitivity / specificity as well<br />
+</li>
+<li>With specific seed number and split percentage, KNN model can meet project requirements of 60%+ on both sensitivity and specificity on test set. However the same model can’t achieve that accurate prediction results if we change to use a new test set.<br />
+</li>
+<li>A more robust model need to be created for better prediction.</li>
+</ol>
+</div>
+<div id="build-random-forest-model" class="section level2">
+<h2>Build Random Forest Model</h2>
+</div>
+<div id="over-sampling-data-set" class="section level2">
+<h2>over-sampling data set</h2>
+<pre><code>## 
+##  No Yes 
+## 553  99</code></pre>
+<pre><code>## 
+##        No       Yes 
+## 0.8481595 0.1518405</code></pre>
+<pre><code>## 
+##  No Yes 
+## 553 553</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = over[, c(2, 4, 16, 24, 29)], y = as.factor(over[,      3]), ntree = 2000, importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 2000
+## No. of variables tried at each split: 2
+## 
+##         OOB estimate of  error rate: 13.56%
+## Confusion matrix:
+##      No Yes class.error
+## No  451 102  0.18444846
+## Yes  48 505  0.08679928</code></pre>
+<p><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre><code>## Sensitivity Specificity 
+##   0.8135593   0.6097561</code></pre>
+<pre><code>## Sensitivity Specificity 
+##   0.8517179   0.9292929</code></pre>
+<pre><code>## Sensitivity Specificity 
+##   0.8424658   0.8357143</code></pre>
+<pre><code>## Sensitivity Specificity 
+##   0.8517179   0.9330922</code></pre>
+</div>
+<div id="random-forest-model-summary" class="section level2">
+<h2>Random Forest Model Summary</h2>
+<ol style="list-style-type: decimal">
+<li>75% sensitivity and 63.4% specificity achieved on test set the same time<br />
+</li>
+<li>88% / 98% on train set<br />
+</li>
+<li>85% / 88% on original whole set (train + test)<br />
+</li>
+<li>Both numeric and categorical variables can be used in Random Forest Model as predictors.</li>
+</ol>
+</div>
+</div>
+<div id="task-2" class="section level1">
+<h1>TASK 2:</h1>
+<p>Dataset: CaseStudy2CompSet No Attrition.csv<br />
+Provide a model that will attain at least 60% sensitivity and specificity (60 each = 120 total) for the training and the validation set, provide the labels (ordered by ID) in a csv file.<br />
+Model used for Task2 is the Random Forest Model</p>
+<pre><code>## &#39;data.frame&#39;:    300 obs. of  36 variables:
+##  $ ID                      : int  1171 1172 1173 1174 1175 1176 1177 1178 1179 1180 ...
+##  $ Age                     : int  35 33 26 55 29 51 52 39 31 31 ...
+##  $ Attrition               : Factor w/ 1 level &quot;&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ BusinessTravel          : Factor w/ 3 levels &quot;Non-Travel&quot;,&quot;Travel_Frequently&quot;,..: 3 3 3 3 3 2 1 3 3 2 ...
+##  $ DailyRate               : int  750 147 1330 1311 1246 1456 585 1387 1062 534 ...
+##  $ Department              : Factor w/ 3 levels &quot;Human Resources&quot;,..: 2 1 2 2 3 2 3 2 2 2 ...
+##  $ DistanceFromHome        : int  28 2 21 2 19 1 29 10 24 20 ...
+##  $ Education               : int  3 3 3 3 3 4 4 5 3 3 ...
+##  $ EducationField          : Factor w/ 6 levels &quot;Human Resources&quot;,..: 2 1 4 2 2 4 2 4 4 2 ...
+##  $ EmployeeCount           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ EmployeeNumber          : int  1596 1207 1107 505 1497 145 2019 1618 1252 587 ...
+##  $ EnvironmentSatisfaction : int  2 2 1 3 3 1 1 2 3 1 ...
+##  $ Gender                  : Factor w/ 2 levels &quot;Female&quot;,&quot;Male&quot;: 2 2 2 1 2 1 2 2 1 2 ...
+##  $ HourlyRate              : int  46 99 37 97 77 30 40 76 96 66 ...
+##  $ JobInvolvement          : int  4 3 3 3 2 2 3 3 2 3 ...
+##  $ JobLevel                : int  2 1 1 4 2 3 1 2 2 3 ...
+##  $ JobRole                 : Factor w/ 9 levels &quot;Healthcare Representative&quot;,..: 3 2 3 4 8 1 9 5 1 1 ...
+##  $ JobSatisfaction         : int  3 3 3 4 3 1 4 1 1 3 ...
+##  $ MaritalStatus           : Factor w/ 3 levels &quot;Divorced&quot;,&quot;Married&quot;,..: 2 2 1 3 1 3 1 2 3 2 ...
+##  $ MonthlyIncome           : int  3407 3600 2377 16659 8620 7484 3482 5377 6812 9824 ...
+##  $ MonthlyRate             : int  25348 8429 19373 23258 23757 25796 19788 3835 17198 22908 ...
+##  $ NumCompaniesWorked      : int  1 1 1 2 1 3 2 2 1 3 ...
+##  $ Over18                  : Factor w/ 1 level &quot;Y&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ OverTime                : Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 1 2 1 1 1 1 1 1 ...
+##  $ PercentSalaryHike       : int  17 13 20 13 14 20 15 13 19 12 ...
+##  $ PerformanceRating       : int  3 3 4 3 3 4 3 3 3 3 ...
+##  $ RelationshipSatisfaction: int  4 4 3 3 3 3 2 4 2 1 ...
+##  $ StandardHours           : int  80 80 80 80 80 80 80 80 80 80 ...
+##  $ StockOptionLevel        : int  2 1 1 0 2 0 2 3 0 0 ...
+##  $ TotalWorkingYears       : int  10 5 1 30 10 23 16 10 10 12 ...
+##  $ TrainingTimesLastYear   : int  3 2 0 2 3 1 3 3 2 2 ...
+##  $ WorkLifeBalance         : int  2 3 2 3 3 2 2 3 3 3 ...
+##  $ YearsAtCompany          : int  10 5 1 5 10 13 9 7 10 1 ...
+##  $ YearsInCurrentRole      : int  9 4 1 4 7 12 8 7 9 0 ...
+##  $ YearsSinceLastPromotion : int  6 1 0 1 0 12 0 7 1 0 ...
+##  $ YearsWithCurrManager    : int  8 4 0 2 4 8 0 7 8 0 ...</code></pre>
+</div>
+<div id="task-3" class="section level1">
+<h1>TASK 3:</h1>
+<p>Provide a model that will attain a RMSE &lt; $3000 for the training and the validation set, provide the predicted salaries (ordered by ID) in a csv file. <img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-21-1.png" width="672" /><img src="CaseStudy2_EmployeeTurnover_v03_files/figure-html/unnamed-chunk-21-2.png" width="672" /></p>
+<pre><code>## [1] &quot;Correlation test: MonthlyIncome vs. JobLevel: &quot;</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  EmployeeDF$MonthlyIncome and EmployeeDF$JobLevel
+## t = 91.262, df = 868, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.9449434 0.9575400
+## sample estimates:
+##     cor 
+## 0.95164</code></pre>
+<pre><code>## [1] &quot;Correlation test: MonthlyIncome vs. TotalWorkingYears: &quot;</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  EmployeeDF$MonthlyIncome and EmployeeDF$TotalWorkingYears
+## t = 36.544, df = 868, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7509003 0.8034053
+## sample estimates:
+##       cor 
+## 0.7785112</code></pre>
+<pre><code>## [1] &quot;Linear Regression Model: &quot;</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = MonthlyIncome ~ JobLevel + TotalWorkingYears + JobLevel * 
+##     TotalWorkingYears, data = EmployeeDF)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5262.0  -774.3   -68.4   666.1  4120.1 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                -414.449    174.794  -2.371    0.018 *  
+## JobLevel                   3023.724     98.455  30.712  &lt; 2e-16 ***
+## TotalWorkingYears           -63.901     15.870  -4.027 6.15e-05 ***
+## JobLevel:TotalWorkingYears   46.513      4.926   9.443  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1324 on 866 degrees of freedom
+## Multiple R-squared:  0.9174, Adjusted R-squared:  0.9171 
+## F-statistic:  3204 on 3 and 866 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code>## [1] &quot;RMSE of the model: &quot;</code></pre>
+<pre><code>## [1] 1320.958</code></pre>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>Employee data set has been used in this case study. Firstly I conducted the EDA analysis with tools of data visualization, boxplots, density plots and bar charts have been used to check whether there are special pattern in the variables that contribute to the attrition rate. Then I run the correlation test to check if any strong correlation exit in between the numeric variables. After that I tried to build KNN model to predict the attrition rate, and found the imblanced data resulted in high % of sensitivity and low % of specificity, over-sampling tool has been used to re-build a new data set, and Random Forest Model is selected due to the better result on balanced data, which result in a 75% sensitivity and 63.4% specificity in the end. Then this model is used to predict the attrition rate in a new data set, 31 out of the 300 observations have been predicted as leaving company employees. Finally a linear regression model has been built and be used to predict the MonthlyIncome of employees with a new test set, JobLevel and TotalWorkingYears are two explanatory variables used in this model, together with the interaction part, all the parameters passed the t-Test with p-value smaller than 0.05, Adj R-square=0.9171, RMSE is 1320.956.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

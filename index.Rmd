@@ -1,0 +1,36 @@
+---
+title: "My Profile"
+author: "Hao Wang"
+date: "12/05/2019"
+output: html_document
+---
+<br>
+<br>
+<br>
+<br>
+<br>
+- **Name**: *Hao Wang*  
+<br>  
+- **Picture**:  
+<br>
+![Alt text](C:/Edu/GitHub_DDS/HaoWang-Data/Michael_pic.jpg)  
+<br>
+- **From**: *Dallas Texas*  
+<br>
+- **Interest**: *Data Science*  
+<br>
+- **School**: *SMU*  
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+**Note:** *The other tabs represent work / analyses that I have completed.  Please check them out!*        

@@ -6,3 +6,5 @@ navbar:
       href: index.html
     - text: "Beer Study"
       href: EDAforProject1_R5.html
+    - text: "Attrition Study"
+      href: CaseStudy2_EmployeeTurnover_v03.html
