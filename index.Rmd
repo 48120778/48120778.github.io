@@ -1,17 +1,9 @@
 ---
 title: "My Profile"
-author: "Hao Wang"
-date: "12/05/2019"
+author: "HAO WANG (Michael)"
+date: "12.2019"
 output: html_document
 ---
-<br>
-<br>
-<br>
-<br>
-<br>
-- **Name**: *Hao Wang*  
-<br>  
-- **Picture**:  
 <br>
 ![Alt text](C:/Edu/GitHub_DDS/HaoWang-Data/Michael_pic.jpg)  
 <br>
@@ -21,11 +13,7 @@ output: html_document
 <br>
 - **School**: *SMU*  
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
+- **Shiny App Link**: 
 <br>
 <br>
 <br>
